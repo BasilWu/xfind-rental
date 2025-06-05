@@ -92,11 +92,11 @@ export default function Home() {
         >
           {filteredListings.map(listing => (
             listing.latitude && listing.longitude && (
-              <Marker
-                key={listing.id}
-                position={{ lat: listing.latitude, lng: listing.longitude }}
-                onClick={() => setSelected(listing)}
-              />
+            <Marker
+            key={listing.id}
+            position={{ lat: listing.latitude, lng: listing.longitude }}
+            onClick={() => navigate(`/listing/${listing.id}`)}
+            />
             )
           ))}
           {selected && (

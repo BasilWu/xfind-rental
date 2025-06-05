@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import Listings from "./pages/Listings";
 import NewListing from "./pages/NewListing";
 import MapPage from "./pages/MapPage";
+import ListingDetail from "./pages/ListingDetail";
 import { useAuth } from "./contexts/AuthContext";
 
 function PrivateRoute({ children }) {
@@ -27,6 +28,11 @@ export default function App() {
           </PrivateRoute>
         } />
       </Routes>
+      <Route path="/listing/:id" element={
+        <PrivateRoute>
+          <ListingDetail />
+        </PrivateRoute>
+      } />
       <Route path="/" element={
         <PrivateRoute>
           <Listings />
