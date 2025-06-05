@@ -1,24 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
 
-export default function ListingCard({ listing, ...props }) {
-  const navigate = useNavigate();
-  return (
-    <div
-      // ...style
-      onClick={() => navigate(`/listing/${listing.id}`)}
-    >
-      {/* ...其他內容 */}
-    </div>
-  );
-}
-
+// 這裡只能有一個 export default
 export default function ListingCard({ listing, onClick, isFavorite, onFavorite }) {
-
-  // Swiper 不會重複載入同一張圖
   return (
     <div
       style={{
