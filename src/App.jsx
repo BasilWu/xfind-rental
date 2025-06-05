@@ -33,6 +33,12 @@ export default function App() {
           <NewListing />
         </PrivateRoute>
       } />
+      <Route path="/map" element={
+        <PrivateRoute>
+          <MapPage />
+        </PrivateRoute>
+      } />
     </BrowserRouter>
+    
   );
 }
