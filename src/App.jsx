@@ -10,6 +10,7 @@ import MapPage from "./pages/MapPage";
 import ListingDetail from "./pages/ListingDetail";
 import { useAuth } from "./contexts/AuthContext";
 import Favorites from "./pages/Favorites";
+import MyListings from "./pages/MyListings";
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -29,6 +30,11 @@ export default function App() {
           </PrivateRoute>
         } />
       </Routes>
+      <Route path="/my-listings" element={
+        <PrivateRoute>
+          <MyListings />
+        </PrivateRoute>
+      } />
       <Route path="/listing/:id" element={
         <PrivateRoute>
           <ListingDetail />

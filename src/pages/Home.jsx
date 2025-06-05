@@ -1,3 +1,4 @@
+// src/pages/Home.jsx
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
 import { getListings } from "../hooks/useListings";
@@ -7,26 +8,6 @@ import { useAuth } from "../contexts/AuthContext";
 import { getFavoriteIds, addFavorite, removeFavorite } from "../hooks/useFavorites";
 import { useNavigate } from "react-router-dom";
 
-const navigate = useNavigate();
-
-<button
-  style={{
-    position: "fixed",
-    top: 16,
-    right: 32,
-    zIndex: 10,
-    background: "#175fff",
-    color: "#fff",
-    padding: "8px 16px",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-    fontWeight: "bold"
-  }}
-  onClick={() => navigate("/favorites")}
->
-  我的收藏
-</button>
 const mapContainerStyle = { width: "100%", height: "100vh" };
 const mapCenter = { lat: 24.163, lng: 120.65 };
 
@@ -36,7 +17,9 @@ export default function Home() {
     libraries: ['places']
   });
 
-  const { currentUser } = useAuth();
+  const { currentUser, profile } = useAuth();
+  const navigate = useNavigate();
+
   const [listings, setListings] = useState([]);
   const [selected, setSelected] = useState(null);
   const [filters, setFilters] = useState({
@@ -101,6 +84,38 @@ export default function Home() {
 
   return (
     <div style={{ display: "flex", height: "100vh", width: "100vw" }}>
+      {/* 導航按鈕 */}
+      {profile?.role === "landlord" && (
+        <button
+          onClick={() => navigate("/my-listings")}
+          style={{
+            position: "fixed", top: 16, right: 150, zIndex: 10,
+            background: "#175fff", color: "#fff", padding: "8px 16px",
+            border: "none", borderRadius: 6, cursor: "pointer", fontWeight: "bold"
+          }}
+        >
+          我的刊登
+        </button>
+      )}
+      <button
+        style={{
+          position: "fixed",
+          top: 16,
+          right: 32,
+          zIndex: 10,
+          background: "#175fff",
+          color: "#fff",
+          padding: "8px 16px",
+          border: "none",
+          borderRadius: 6,
+          cursor: "pointer",
+          fontWeight: "bold"
+        }}
+        onClick={() => navigate("/favorites")}
+      >
+        我的收藏
+      </button>
+
       {/* 地圖 */}
       <div style={{ flex: 1, position: "relative" }}>
         <FilterPanel filters={filters} setFilters={setFilters} />
@@ -113,11 +128,11 @@ export default function Home() {
         >
           {filteredListings.map(listing => (
             listing.latitude && listing.longitude && (
-            <Marker
-            key={listing.id}
-            position={{ lat: listing.latitude, lng: listing.longitude }}
-            onClick={() => navigate(`/listing/${listing.id}`)}
-            />
+              <Marker
+                key={listing.id}
+                position={{ lat: listing.latitude, lng: listing.longitude }}
+                onClick={() => navigate(`/listing/${listing.id}`)}
+              />
             )
           ))}
           {selected && (
@@ -152,7 +167,7 @@ export default function Home() {
             <ListingCard
               key={listing.id}
               listing={listing}
-              onClick={() => setSelected(listing)}
+              onClick={() => navigate(`/listing/${listing.id}`)}
               isFavorite={favoriteIds.includes(listing.id)}
               onFavorite={() => handleFavorite(listing.id, favoriteIds.includes(listing.id))}
             />
