@@ -9,6 +9,7 @@ import NewListing from "./pages/NewListing";
 import MapPage from "./pages/MapPage";
 import ListingDetail from "./pages/ListingDetail";
 import { useAuth } from "./contexts/AuthContext";
+import Favorites from "./pages/Favorites";
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -48,7 +49,11 @@ export default function App() {
           <MapPage />
         </PrivateRoute>
       } />
+      <Route path="/favorites" element={
+        <PrivateRoute>
+          <Favorites />
+        </PrivateRoute>
+      } />
     </BrowserRouter>
-    
   );
 }

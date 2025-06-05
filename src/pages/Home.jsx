@@ -5,7 +5,28 @@ import FilterPanel from "../components/FilterPanel";
 import ListingCard from "../components/ListingCard";
 import { useAuth } from "../contexts/AuthContext";
 import { getFavoriteIds, addFavorite, removeFavorite } from "../hooks/useFavorites";
+import { useNavigate } from "react-router-dom";
 
+const navigate = useNavigate();
+
+<button
+  style={{
+    position: "fixed",
+    top: 16,
+    right: 32,
+    zIndex: 10,
+    background: "#175fff",
+    color: "#fff",
+    padding: "8px 16px",
+    border: "none",
+    borderRadius: 6,
+    cursor: "pointer",
+    fontWeight: "bold"
+  }}
+  onClick={() => navigate("/favorites")}
+>
+  我的收藏
+</button>
 const mapContainerStyle = { width: "100%", height: "100vh" };
 const mapCenter = { lat: 24.163, lng: 120.65 };
 
