@@ -1,8 +1,12 @@
 // src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Listings from "./pages/Listings";
+import NewListing from "./pages/NewListing";
+import MapPage from "./pages/MapPage";
 import { useAuth } from "./contexts/AuthContext";
 
 function PrivateRoute({ children }) {
@@ -19,7 +23,7 @@ export default function App() {
         {/* 之後會加上首頁、房東房客分頁... */}
         <Route path="/" element={
           <PrivateRoute>
-            <div>登入後首頁</div>
+            <Home />
           </PrivateRoute>
         } />
       </Routes>
