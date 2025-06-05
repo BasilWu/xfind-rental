@@ -23,6 +23,16 @@ export default function App() {
           </PrivateRoute>
         } />
       </Routes>
+      <Route path="/" element={
+        <PrivateRoute>
+          <Listings />
+        </PrivateRoute>
+      } />
+      <Route path="/new" element={
+        <PrivateRoute>
+          <NewListing />
+        </PrivateRoute>
+      } />
     </BrowserRouter>
   );
 }
