@@ -125,6 +125,9 @@ export default function Home() {
           zoom={12}
           onLoad={onLoad}
           onBoundsChanged={onBoundsChanged}
+            options={{
+              gestureHandling: "greedy"
+            }}
         >
           {filteredListings.map(listing => (
             listing.latitude && listing.longitude && (
