@@ -2,16 +2,12 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { GoogleMap, Marker, InfoWindow, useJsApiLoader } from "@react-google-maps/api";
 import { getListings } from "../hooks/useListings";
 import FilterPanel from "../components/FilterPanel";
+import ListingCard from "../components/ListingCard";
+import { useAuth } from "../contexts/AuthContext";
+import { getFavoriteIds, addFavorite, removeFavorite } from "../hooks/useFavorites";
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "100vh",
-};
-
-const mapCenter = {
-  lat: 24.163,  // 台中中心
-  lng: 120.65,
-};
+const mapContainerStyle = { width: "100%", height: "100vh" };
+const mapCenter = { lat: 24.163, lng: 120.65 };
 
 export default function Home() {
   const { isLoaded } = useJsApiLoader({
@@ -19,27 +15,25 @@ export default function Home() {
     libraries: ['places']
   });
 
+  const { currentUser } = useAuth();
   const [listings, setListings] = useState([]);
   const [selected, setSelected] = useState(null);
   const [filters, setFilters] = useState({
-    minPrice: "",
-    maxPrice: "",
-    minArea: "",
-    maxArea: "",
-    roomType: ""
+    minPrice: "", maxPrice: "", minArea: "", maxArea: "", roomType: ""
   });
   const [mapBounds, setMapBounds] = useState(null);
+  const [favoriteIds, setFavoriteIds] = useState([]);
 
   const mapRef = useRef();
 
+  useEffect(() => { getListings().then(setListings); }, []);
   useEffect(() => {
-    getListings().then(setListings);
-  }, []);
+    if (currentUser) {
+      getFavoriteIds(currentUser.uid).then(setFavoriteIds);
+    }
+  }, [currentUser]);
 
-  const onLoad = useCallback((map) => {
-    mapRef.current = map;
-  }, []);
-
+  const onLoad = useCallback(map => { mapRef.current = map; }, []);
   const onBoundsChanged = () => {
     if (mapRef.current) {
       const bounds = mapRef.current.getBounds();
@@ -52,7 +46,6 @@ export default function Home() {
     }
   };
 
-  // 條件+地圖範圍過濾
   const filteredListings = listings.filter(listing => {
     if (filters.minPrice && listing.pricePerMonth < Number(filters.minPrice)) return false;
     if (filters.maxPrice && listing.pricePerMonth > Number(filters.maxPrice)) return false;
@@ -72,15 +65,22 @@ export default function Home() {
     return true;
   });
 
+  const handleFavorite = async (listingId, isFav) => {
+    if (!currentUser) return alert("請先登入！");
+    if (isFav) {
+      await removeFavorite(currentUser.uid, listingId);
+    } else {
+      await addFavorite(currentUser.uid, listingId);
+    }
+    // 重新獲取收藏
+    getFavoriteIds(currentUser.uid).then(setFavoriteIds);
+  };
+
   if (!isLoaded) return <div>Loading...</div>;
 
   return (
-    <div style={{
-      display: "flex",
-      height: "100vh",
-      width: "100vw"
-    }}>
-      {/* 左側地圖 */}
+    <div style={{ display: "flex", height: "100vh", width: "100vw" }}>
+      {/* 地圖 */}
       <div style={{ flex: 1, position: "relative" }}>
         <FilterPanel filters={filters} setFilters={setFilters} />
         <GoogleMap
@@ -109,22 +109,17 @@ export default function Home() {
                 <div>{selected.city} {selected.district}</div>
                 <div>{selected.pricePerMonth}元/月</div>
                 {selected.images?.[0] &&
-                  <img src={selected.images[0]} alt="" width="120" style={{marginTop: 4}} />
+                  <img src={selected.images[0]} alt="" width="120" style={{ marginTop: 4 }} />
                 }
               </div>
             </InfoWindow>
           )}
         </GoogleMap>
       </div>
-
-      {/* 右側房源列表 */}
+      {/* 房源列表 */}
       <div style={{
-        width: 400, // 你可以改大一點
-        height: "100vh",
-        overflowY: "auto",
-        borderLeft: "1px solid #eee",
-        background: "#fafbfc",
-        padding: 12
+        width: 400, height: "100vh", overflowY: "auto",
+        borderLeft: "1px solid #eee", background: "#fafbfc", padding: 12
       }}>
         <div style={{ fontWeight: "bold", marginBottom: 8 }}>
           共 {filteredListings.length} 筆結果
@@ -133,27 +128,13 @@ export default function Home() {
           <div>無房源</div>
         ) : (
           filteredListings.map(listing => (
-            <div
+            <ListingCard
               key={listing.id}
-              style={{
-                border: "1px solid #e0e0e0",
-                borderRadius: 8,
-                background: "#fff",
-                marginBottom: 16,
-                cursor: "pointer",
-                boxShadow: "0 2px 8px #0001",
-                padding: 8
-              }}
+              listing={listing}
               onClick={() => setSelected(listing)}
-            >
-              {listing.images?.[0] &&
-                <img src={listing.images[0]} alt="" style={{ width: "100%", borderRadius: 6, marginBottom: 6 }} />
-              }
-              <div style={{ fontWeight: "bold", fontSize: 16 }}>{listing.title}</div>
-              <div>{listing.city} {listing.district} {listing.street}</div>
-              <div>租金：{listing.pricePerMonth} 元 / 月　坪數：{listing.areaSize}</div>
-              <div style={{ fontSize: 12, color: "#666" }}>{listing.description}</div>
-            </div>
+              isFavorite={favoriteIds.includes(listing.id)}
+              onFavorite={() => handleFavorite(listing.id, favoriteIds.includes(listing.id))}
+            />
           ))
         )}
       </div>
