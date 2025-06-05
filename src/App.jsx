@@ -1,6 +1,7 @@
 // src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Header from "./components/Header";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -20,46 +21,56 @@ function PrivateRoute({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <Header />
+      <div style={{ paddingTop: 64 }}></div>
       <Routes>
+        {/* 公開頁面 */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        {/* 之後會加上首頁、房東房客分頁... */}
         <Route path="/" element={
           <PrivateRoute>
             <Home />
           </PrivateRoute>
         } />
+        {/* 需要登入的頁面 */}
+        <Route path="/" element={
+          <PrivateRoute>
+            <Home />
+          </PrivateRoute>
+        } />
+        <Route path="/my-listings" element={
+          <PrivateRoute>
+            <MyListings />
+          </PrivateRoute>
+        } />
+        <Route path="/listing/:id" element={
+          <PrivateRoute>
+            <ListingDetail />
+          </PrivateRoute>
+        } />
+        <Route path="/listings" element={
+          <PrivateRoute>
+            <Listings />
+          </PrivateRoute>
+        } />
+        <Route path="/new" element={
+          <PrivateRoute>
+            <NewListing />
+          </PrivateRoute>
+        } />
+        <Route path="/map" element={
+          <PrivateRoute>
+            <MapPage />
+          </PrivateRoute>
+        } />
+        <Route path="/favorites" element={
+          <PrivateRoute>
+            <Favorites />
+          </PrivateRoute>
+        } />
+        {/* 未匹配的路徑自動導向登入頁或首頁 */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      <Route path="/my-listings" element={
-        <PrivateRoute>
-          <MyListings />
-        </PrivateRoute>
-      } />
-      <Route path="/listing/:id" element={
-        <PrivateRoute>
-          <ListingDetail />
-        </PrivateRoute>
-      } />
-      <Route path="/" element={
-        <PrivateRoute>
-          <Listings />
-        </PrivateRoute>
-      } />
-      <Route path="/new" element={
-        <PrivateRoute>
-          <NewListing />
-        </PrivateRoute>
-      } />
-      <Route path="/map" element={
-        <PrivateRoute>
-          <MapPage />
-        </PrivateRoute>
-      } />
-      <Route path="/favorites" element={
-        <PrivateRoute>
-          <Favorites />
-        </PrivateRoute>
-      } />
     </BrowserRouter>
   );
 }
