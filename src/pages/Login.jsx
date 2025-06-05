@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -37,6 +38,9 @@ export default function Login() {
       />
       <button type="submit">登入</button>
       {error && <div>{error}</div>}
+      <div style={{ textAlign: "center", marginTop: 18 }}>
+        沒有帳號？ <Link to="/register" style={{ color: "#175fff" }}>註冊新帳號</Link>
+      </div>
     </form>
   );
 }
