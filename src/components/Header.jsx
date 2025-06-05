@@ -1,3 +1,4 @@
+// src/components/Header.jsx
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -5,6 +6,12 @@ import { useAuth } from "../contexts/AuthContext";
 export default function Header() {
   const { currentUser, profile, logout } = useAuth();
   const navigate = useNavigate();
+
+  // 包裝一個登出自動跳轉
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   return (
     <header style={{
@@ -39,7 +46,7 @@ export default function Header() {
         ) : (
           <>
             <span style={{ marginRight: 16 }}>哈囉，{profile?.displayName || currentUser.email}</span>
-            <button onClick={logout} style={{
+            <button onClick={handleLogout} style={{
               background: "rgba(255,255,255,0.1)",
               border: "none",
               color: "#fff",
